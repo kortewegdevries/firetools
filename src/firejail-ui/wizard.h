@@ -37,7 +37,7 @@ class Wizard : public QWizard {
 	Q_OBJECT
 
 public:
-	enum { Page_Application, Page_Config, Page_Config2, Page_StartSandbox };
+	enum { Page_Application, Page_Config, Page_Config2, Page_Config3, Page_StartSandbox };
 
 	Wizard(QWidget *parent = 0);
 	void accept();
@@ -139,6 +139,24 @@ private:
 	QCheckBox *seccomp_;
 	QCheckBox *caps_;
 	QCheckBox *noroot_;
+};
+
+class ConfigPage3 : public QWizardPage {
+	Q_OBJECT
+
+public:
+	ConfigPage3(QWidget *parent = 0);
+
+	int nextId() const;
+
+public slots:
+
+private:
+
+	// dbus
+	QCheckBox *dbususernone_;
+	QCheckBox *dbussystemnone_;	
+	
 };
 
 class StartSandboxPage : public QWizardPage {

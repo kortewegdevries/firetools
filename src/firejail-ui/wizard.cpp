@@ -59,6 +59,7 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 	setPage(Page_Application, new ApplicationPage);
 	setPage(Page_Config, new ConfigPage);
 	setPage(Page_Config2, new ConfigPage2);
+	setPage(Page_Config3, new ConfigPage3);
 	setPage(Page_StartSandbox, new StartSandboxPage);
 	setStartId(Page_Application);
 
@@ -662,15 +663,47 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 }
 
 int ConfigPage2::nextId() const {
-	return Wizard::Page_StartSandbox;
+	return Wizard::Page_Config3;
 }
-
 
 void ConfigPage2::initializePage() {
 	if (field("sysnetwork").toBool())
 		nox11_->setEnabled(false);
 	else
 		nox11_->setEnabled(true);
+}
+
+ConfigPage3::ConfigPage3(QWidget *parent): QWizardPage(parent) {
+	setTitle(global_title);
+	setSubTitle(global_subtitle);
+
+	QLabel *label1 = new QLabel(tr("<b>Step 4: Configure Dbus Policies</b>"));
+	
+	QGroupBox *dbus_box = new QGroupBox(tr("DBus Policy"));
+	QVBoxLayout *dbus_box_layout = new QVBoxLayout;
+	dbus_box_layout->addWidget(dbususernone_);
+	dbus_box_layout->addWidget(dbussystemnone_);
+	dbus_box->setLayout(dbus_box_layout);
+	dbus_box->setFlat(false);
+	dbus_box->setCheckable(true);
+	
+	dbussystemnone_= new QCheckBox("Disable system DBus access");
+	registerField("dbus-system none", dbussystemnone_);
+	
+	dbususernone_ = new QCheckBox("Disable session DBus access ");
+	registerField("dbus-user none", dbususernone_);
+	
+	QWidget *w = new QWidget;
+	w->setMinimumHeight(8);
+	QGridLayout *layout = new QGridLayout;
+	layout->addWidget(label1, 0, 0);
+	layout->addWidget(w, 1, 0);
+	layout->addWidget(dbus_box, 2, 0);
+	setLayout(layout);
+}
+
+int ConfigPage3::nextId() const {
+	return Wizard::Page_StartSandbox;
 }
 
 
@@ -693,7 +726,7 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	mon_ = new QCheckBox("Sandbox monitoring and statistics");
 	mon_->setFont(oldFont);
 
-	if (!isatty(0)) {
+	if (!isatty(1)) {
 		debug_->setEnabled(false);
 		trace_->setEnabled(false);
 	}
