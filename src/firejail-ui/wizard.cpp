@@ -68,9 +68,10 @@ Wizard::Wizard(QWidget *parent): QWizard(parent) {
 
 	setWindowTitle(tr("Firejail Configuration Wizard"));
 
-	setWizardStyle(QWizard::MacStyle);
-	setPixmap(QWizard::BackgroundPixmap, QPixmap(":/resources/background.png"));
-	//resize( QSize(600, 400).expandedTo(minimumSizeHint()) );
+        setWizardStyle(QWizard::ClassicStyle);
+	setPixmap(QWizard::WatermarkPixmap, QPixmap(":/resources/background.png"));
+	setPixmap(QWizard::LogoPixmap, QPixmap(":/resources/logo.png"));
+	setFixedSize(900, 600);
 
 }
 
@@ -272,19 +273,15 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 
 	QGroupBox *app_box = new QGroupBox(tr("Step 1: Choose an application"));
 	app_box->setFont(bold);
-//	app_box->setStyleSheet("QGroupBox { color : black; }");
 
 	QLabel *label1 = new QLabel(tr("Choose an application from the menus below"));
 	label1->setFont(oldFont);
-//	label1->setStyleSheet("QLabel { color : black; }");
 
 	QGridLayout *app_box_layout = new QGridLayout;
 	group_ = new QListWidget;
 	group_->setFont(oldFont);
-//	group_->setStyleSheet("QGridLayout { color : black; }");
 	command_ = new QLineEdit;
 	command_->setFont(oldFont);
-//	group_->setStyleSheet("QLineEdit { color : black; }");
 
 	browse_ = new QPushButton("browse filesystem");
 	QIcon icon(":resources/gnome-fs-directory.png");
@@ -293,10 +290,8 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 
 	QLabel *label2 = new QLabel("or type in the program name:");
 	label2->setFont(oldFont);
-//	label2->setStyleSheet("QLabel { color : black; }");
 	app_ = new QListWidget;
 	app_->setFont(oldFont);
-//	app_->setStyleSheet("QListWidget { color : black; }");
 	app_->setMinimumWidth(300);
 	app_box_layout->addWidget(label1, 0, 0, 1, 2);
 	app_box_layout->addWidget(group_, 1, 0);
@@ -308,14 +303,11 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 
 	QGroupBox *profile_box = new QGroupBox(tr("Step 2: Choose a security profile"));
 	profile_box->setFont(bold);
-//	profile_box->setStyleSheet("QGroupBox { color : black; }");
 	use_default_ = new QRadioButton("Use a default security profile");
 	use_default_->setFont(oldFont);
-//	use_default_->setStyleSheet("QRadioButton { color : black; }");
 	use_default_->setChecked(true);
 	use_custom_ = new QRadioButton("Build a custom security profile");
 	use_custom_->setFont(oldFont);
-//	use_custom_->setStyleSheet("QRadioButton { color : black; }");
 	QVBoxLayout *profile_box_layout = new QVBoxLayout;
 	profile_box_layout->addWidget(use_default_);
 	profile_box_layout->addWidget(use_custom_);
@@ -343,7 +335,7 @@ ApplicationPage::ApplicationPage(QWidget *parent): QWizardPage(parent) {
 	registerField("command*", command_);
 	registerField("use_custom", use_custom_);
 
-//	setFocusPolicy(Qt::StrongFocus);
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 void ApplicationPage::groupChanged(QListWidgetItem * current, QListWidgetItem * previous) {
@@ -419,47 +411,40 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox</b>"));
-//	label1->setStyleSheet("QLabel { color : black; }");
 
 	whitelisted_home_ = new QCheckBox("Restrict /home directory");
-//	whitelisted_home_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("restricted_home", whitelisted_home_);
 	private_dev_ = new QCheckBox("Restrict /dev directory");
 	private_dev_->setChecked(true);
-//	private_dev_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("private_dev", private_dev_);
 
 	private_tmp_ = new QCheckBox("Restrict /tmp directory");
 	private_tmp_->setChecked(true);
-//	private_tmp_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("private_tmp", private_tmp_);
 
 	mnt_media_ = new QCheckBox("Restrict /mnt and /media");
 	mnt_media_->setChecked(true);
-//	mnt_media_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("mnt_media", mnt_media_);
 
 	QGroupBox *fs_box = new QGroupBox(tr("File System"));
-//	fs_box->setStyleSheet("QGroupBox { color : black; }");
+
 	QVBoxLayout *fs_box_layout = new QVBoxLayout;
 	fs_box_layout->addWidget(whitelisted_home_);
 	fs_box_layout->addWidget(private_dev_);
 	fs_box_layout->addWidget(private_tmp_);
 	fs_box_layout->addWidget(mnt_media_);
 	fs_box->setLayout(fs_box_layout);
-//	fs_box->setFlat(false);
-//	fs_box->setCheckable(true);
+	fs_box->setFlat(false);
+	fs_box->setCheckable(true);
 
 
 	// networking
 	global_ifname = detect_network();
 	sysnetwork_ = new QRadioButton("System network");
 	sysnetwork_->setChecked(true);
-//	sysnetwork_->setStyleSheet("QRadioButton { color : black; }");
 	registerField("sysnetwork", sysnetwork_);
 
 	nonetwork_ = new QRadioButton("Disable networking");
-//	nonetwork_->setStyleSheet("QRadioButton { color : black; }");
 	registerField("nonetwork", nonetwork_);
 
 	if (global_ifname.isEmpty()) {
@@ -468,10 +453,8 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	}
 	else
 		netnamespace_ = new QRadioButton(QString("Namespace (") + global_ifname + ")");
-//	netnamespace_->setStyleSheet("QRadioButton { color : black; }");
 	registerField("netnamespace", netnamespace_);
 	QGroupBox *net_box = new QGroupBox(tr("Networking"));
-//	net_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *net_box_layout = new QVBoxLayout;
 	net_box_layout->addWidget(sysnetwork_);
 	net_box_layout->addWidget(netnamespace_);
@@ -480,7 +463,6 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 
 	home_ = new HomeWidget;
 	QGroupBox *home_box = new QGroupBox(tr("Home Directory"));
-//	home_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *home_box_layout = new QVBoxLayout;
 	home_box_layout->addWidget(home_);
 	home_box->setLayout(home_box_layout);
@@ -505,7 +487,6 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *dns_box = new QGroupBox(tr("DNS"));
 	dns_box->setCheckable(true);
 	dns_box->setChecked(false);
-//	dns_box->setStyleSheet("QGroupBox { color : black; }");
 	connect(dns_box, SIGNAL(toggled(bool)), this, SLOT(setDns(bool)));
 	QVBoxLayout *dns_box_layout = new QVBoxLayout;
 	dns_box_layout->addWidget(dns1_);
@@ -532,7 +513,6 @@ ConfigPage::ConfigPage(QWidget *parent): QWizardPage(parent) {
 	QGroupBox *protocol_box = new QGroupBox(tr("Network Protocol"));
 	protocol_box->setCheckable(true);
 	protocol_box->setChecked(false);
-//	protocol_box->setStyleSheet("QGroupBox { color : black; }");
 	connect(protocol_box, SIGNAL(toggled(bool)), this, SLOT(setProtocol(bool)));
 	QGridLayout *protocol_box_layout = new QGridLayout;
 	protocol_box_layout->addWidget(protocol_unix_, 0, 0);
@@ -610,32 +590,25 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	setSubTitle(global_subtitle);
 
 	QLabel *label1 = new QLabel(tr("<b>Step 3: Configure the sandbox... continued...</b>"));
-//	label1->setStyleSheet("QLabel { color : black; }");
 	nosound_ = new QCheckBox("Disable sound");
-//	nosound_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("nosound", nosound_);
 
 	nodvd_ = new QCheckBox("Disable CD-ROM/DVD devices");
-//	nodvd_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("nodvd", nodvd_);
 
 	novideo_ = new QCheckBox("Disable video camera devices");
-//	novideo_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("novideo", novideo_);
 
 	notv_ = new QCheckBox("Disable TV/DVB devices");
-//	notv_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("notv", notv_);
 
 	no3d_ = new QCheckBox("Disable 3D acceleration");
-//	no3d_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("no3d", no3d_);
 
 	nox11_ = new QCheckBox("Disable X11 support");
 	registerField("nox11", nox11_);
 
 	QGroupBox *multimed_box = new QGroupBox(tr("Multimedia"));
-//	multimed_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *multimed_box_layout = new QVBoxLayout;
 	multimed_box_layout->addWidget(nosound_);
 	multimed_box_layout->addWidget(novideo_);
@@ -644,8 +617,8 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	multimed_box_layout->addWidget(no3d_);
 	multimed_box_layout->addWidget(nox11_);
 	multimed_box->setLayout(multimed_box_layout);
-//	multimed_box->setFlat(false);
-//	multimed_box->setCheckable(true);
+	multimed_box->setFlat(false);
+	multimed_box->setCheckable(true);
 
 	seccomp_ = new QCheckBox("Enable seccomp-bpf");
 	if (kernel_major == 3 && kernel_minor < 5) {
@@ -659,7 +632,6 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 
 	caps_ = new QCheckBox("Disable all Linux capabilities");
 	caps_->setChecked(true);
-//	caps_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("caps", caps_);
 
 	noroot_ = new QCheckBox("Restricted  user namespace (noroot)");
@@ -670,11 +642,9 @@ ConfigPage2::ConfigPage2(QWidget *parent): QWizardPage(parent) {
 	}
 	else
 		noroot_->setChecked(true);
-//	noroot_->setStyleSheet("QCheckBox { color : black; }");
 	registerField("noroot", noroot_);
 
 	QGroupBox *kernel_box = new QGroupBox(tr("Kernel"));
-//	kernel_box->setStyleSheet("QGroupBox { color : black; }");
 	QVBoxLayout *kernel_box_layout = new QVBoxLayout;
 	kernel_box_layout->addWidget(seccomp_);
 	kernel_box_layout->addWidget(caps_);
@@ -716,16 +686,12 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 
 	QGroupBox *debug_box = new QGroupBox(tr("Step 4: Debugging"));
 	debug_box->setFont(bold);
-//	debug_box->setStyleSheet("QGroupBox { color : black; }");
 	debug_ = new QCheckBox("Enable sandbox debugging");
 	debug_->setFont(oldFont);
-//	debug_->setStyleSheet("QCheckBox { color : black; }");
 	trace_ = new QCheckBox("Trace filesystem and network access");
 	trace_->setFont(oldFont);
-//	trace_->setStyleSheet("QCheckBox { color : black; }");
 	mon_ = new QCheckBox("Sandbox monitoring and statistics");
 	mon_->setFont(oldFont);
-//	mon_->setStyleSheet("QCheckBox { color : black; }");
 
 	if (!isatty(0)) {
 		debug_->setEnabled(false);
@@ -740,9 +706,11 @@ StartSandboxPage::StartSandboxPage(QWidget *parent): QWizardPage(parent) {
 	debug_box_layout->addWidget(mon_);
 	debug_box->setLayout(debug_box_layout);
 
+
 	QLabel *label1 = new QLabel(tr("Press <b>Done</b> to start the sandbox.<br/><br/>"
-		"For more information, visit us at <b>http://firejail.wordpress.com</b>. "
-		"Thank you for using Firejail!"));
+	"For more information, visit us at <a href=\"http://firejail.wordpress.com/\">Wordpress</a> or <a href=\"https://github.com/netblue30/firejail/\">GitHub</a>."
+        "Thank you for using Firejail!"));
+        
 	QWidget *empty1 = new QWidget;
 	empty1->setMinimumHeight(12);
 	QWidget *empty2 = new QWidget;
